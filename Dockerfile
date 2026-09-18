@@ -8,13 +8,10 @@
 FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
-# Descargar dependencias para aprovechar la caché de capas Docker
+# Copiar el proyecto y empaquetar el JAR ejecutable (las pruebas se corren antes con "mvn test")
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-# Copiar código fuente y empaquetar la aplicación
 COPY src ./src
-RUN mvn clean package -DskipTests -B
+RUN mvn -B -DskipTests package
 
 # Etapa 2: Ejecución
 FROM eclipse-temurin:21-jre-jammy
