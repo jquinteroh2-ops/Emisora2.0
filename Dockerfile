@@ -35,4 +35,5 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Parámetros optimizados de JVM para entornos de contenedores en la nube
-ENTRYPOINT ["sh", "-c", "java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Dserver.port=${PORT:-8080} -Djava.security.egd=file:/dev/./urandom -jar app.jar"]
+# Hora de Colombia para las fechas de registro de usuarios y el reporte por fechas
+ENTRYPOINT ["sh", "-c", "java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Duser.timezone=America/Bogota -Dserver.port=${PORT:-8080} -Djava.security.egd=file:/dev/./urandom -jar app.jar"]
