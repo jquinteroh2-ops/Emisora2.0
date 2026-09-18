@@ -141,7 +141,7 @@ public class EmisoraController {
     }
 
     /**
-     * Elimina una emisora. Se admite tanto POST como GET para conveniencia de enlaces.
+     * Elimina una emisora. Solo por POST, para que el formulario viaje con el token CSRF.
      */
     @PostMapping("/eliminar/{id}")
     public String eliminar(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
@@ -156,10 +156,5 @@ public class EmisoraController {
                     "No se pudo eliminar la emisora: " + e.getMessage());
         }
         return "redirect:/emisoras";
-    }
-
-    @GetMapping("/eliminar/{id}")
-    public String eliminarGet(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        return eliminar(id, redirectAttributes);
     }
 }

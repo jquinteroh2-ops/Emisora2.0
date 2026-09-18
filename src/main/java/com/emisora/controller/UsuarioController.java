@@ -168,11 +168,4 @@ public class UsuarioController {
         }
         return "redirect:/usuarios";
     }
-
-    @GetMapping("/eliminar/{id}")
-    public String eliminarGet(@PathVariable("id") Long id,
-                              Authentication authentication,
-                              RedirectAttributes redirectAttributes) {
-        return eliminar(id, authentication, redirectAttributes);
-    }
 }

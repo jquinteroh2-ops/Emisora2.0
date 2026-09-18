@@ -70,6 +70,7 @@ public class SecurityConfig {
                         "/login",
                         "/recuperar-clave/**",
                         "/restablecer-clave/**",
+                        "/error",
                         "/css/**",
                         "/js/**",
                         "/images/**",
@@ -113,9 +114,7 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
-            .exceptionHandling(ex -> ex
-                .accessDeniedPage("/error/403")
-            )
+            // Sin sesión: redirige al login. Sin permiso: Spring Boot muestra templates/error/403.html
             // Permitir consola H2 local en desarrollo
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/h2-console/**")
