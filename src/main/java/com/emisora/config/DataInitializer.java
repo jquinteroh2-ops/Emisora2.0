@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -54,6 +55,18 @@ public class DataInitializer implements CommandLineRunner {
                     new Usuario("U004", defaultPassword, "Ana Gómez", "consulta.emisora@yopmail.com", "CONSULTA"),
                     new Usuario("U005", defaultPassword, "Pedro Ramírez", "pedro.emisora@yopmail.com", "CONSULTA")
             );
+
+            // Mismas fechas de registro que db/02_data.sql, para que el reporte por fechas coincida
+            List<LocalDateTime> fechasRegistro = List.of(
+                    LocalDateTime.of(2026, 8, 1, 8, 0),
+                    LocalDateTime.of(2026, 8, 10, 9, 30),
+                    LocalDateTime.of(2026, 8, 25, 14, 15),
+                    LocalDateTime.of(2026, 9, 2, 11, 0),
+                    LocalDateTime.of(2026, 9, 10, 16, 45)
+            );
+            for (int i = 0; i < usuarios.size(); i++) {
+                usuarios.get(i).setCreatedAt(fechasRegistro.get(i));
+            }
 
             usuarioRepository.saveAll(usuarios);
             log.info("Se crearon {} usuarios iniciales.", usuarios.size());
