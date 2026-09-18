@@ -1,0 +1,38 @@
+# =====================================================================
+# Dockerfile Multi-Stage para Emisora 2.0 (Spring Boot MVC + Thymeleaf)
+# Etapa 1: Compilación con Maven y OpenJDK 21
+# Etapa 2: Imagen final ligera con JRE 21
+# =====================================================================
+
+# Etapa 1: Construcción
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+WORKDIR /app
+
+# Descargar dependencias para aprovechar la caché de capas Docker
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copiar código fuente y empaquetar la aplicación
+COPY src ./src
+RUN mvn clean package -DskipTests -B
+
+# Etapa 2: Ejecución
+FROM eclipse-temurin:21-jre-jammy
+WORKDIR /app
+
+# Crear usuario sin privilegios para ejecución segura
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+
+# Copiar el artefacto JAR ejecutable desde la etapa de compilación
+COPY --from=build /app/target/emisora-2.0.0.jar app.jar
+
+# Asignar permisos al usuario no privilegiado
+RUN chown -R appuser:appgroup /app
+USER appuser
+
+# Puerto por defecto (Render y Railway asignan PORT dinámicamente)
+ENV PORT=8080
+EXPOSE 8080
+
+# Parámetros optimizados de JVM para entornos de contenedores en la nube
+ENTRYPOINT ["sh", "-c", "java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Dserver.port=${PORT:-8080} -Djava.security.egd=file:/dev/./urandom -jar app.jar"]
