@@ -20,7 +20,7 @@ import java.util.List;
 @Transactional
 public class EmisoraService {
 
-    public static final double FM_MIN = 87.0;
+    public static final double FM_MIN = 87.5;
     public static final double FM_MAX = 108.0;
     public static final int AM_MIN = 530;
     public static final int AM_MAX = 1710;

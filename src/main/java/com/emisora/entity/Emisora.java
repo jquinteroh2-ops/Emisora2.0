@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -46,8 +48,8 @@ public class Emisora implements Serializable {
     @Column(name = "canal", nullable = false, length = 100)
     private String canal;
 
-    @Min(value = 87, message = "La frecuencia FM mínima es 87.5 MHz.")
-    @Max(value = 108, message = "La frecuencia FM máxima es 108.0 MHz.")
+    @DecimalMin(value = "87.5", message = "La frecuencia FM mínima es 87.5 MHz.")
+    @DecimalMax(value = "108.0", message = "La frecuencia FM máxima es 108.0 MHz.")
     @Column(name = "banda_fm")
     private Double bandaFm;
 

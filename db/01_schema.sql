@@ -54,7 +54,7 @@ CREATE TABLE emisoras (
     descripcion VARCHAR(500) NULL,
     num_programas INT NOT NULL DEFAULT 0,
     num_ciudades INT NOT NULL DEFAULT 0,
-    CONSTRAINT chk_emisoras_fm CHECK (banda_fm IS NULL OR banda_fm BETWEEN 87.0 AND 108.0),
+    CONSTRAINT chk_emisoras_fm CHECK (banda_fm IS NULL OR banda_fm BETWEEN 87.5 AND 108.0),
     CONSTRAINT chk_emisoras_am CHECK (banda_am IS NULL OR banda_am BETWEEN 530 AND 1710),
     CONSTRAINT chk_emisoras_numeros CHECK (num_locutores >= 0 AND num_programas >= 0 AND num_ciudades >= 0)
 );
