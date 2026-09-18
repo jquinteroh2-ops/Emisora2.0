@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="navbar(activeTab)" class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container-fluid px-lg-4">
+        <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/dashboard}">
+            <i class="bi bi-broadcast fs-4 text-warning"></i>
+            <span>Emisora 2.0</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido"
+                aria-controls="navbarContenido" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContenido">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activeTab == 'dashboard'} ? ' active' : ''" th:href="@{/dashboard}">
+                        <i class="bi bi-speedometer2 me-1"></i> Panel
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activeTab == 'emisoras'} ? ' active' : ''" th:href="@{/emisoras}">
+                        <i class="bi bi-music-note-beamed me-1"></i> Emisoras
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activeTab == 'reportes'} ? ' active' : ''" th:href="@{/reportes}">
+                        <i class="bi bi-file-earmark-bar-graph me-1"></i> Reportes
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:classappend="${activeTab == 'usuarios'} ? ' active' : ''" th:href="@{/usuarios}">
+                        <i class="bi bi-people-fill me-1"></i> Usuarios
+                    </a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-white-50 small d-none d-md-block text-end">
+                    <div>
+                        <strong class="text-white" sec:authentication="name">Usuario</strong>
+                    </div>
+                    <span sec:authorize="hasRole('ADMIN')" class="badge bg-danger">ADMIN</span>
+                    <span sec:authorize="hasRole('OPERADOR')" class="badge bg-primary">OPERADOR</span>
+                    <span sec:authorize="hasRole('CONSULTA')" class="badge bg-success">CONSULTA</span>
+                </div>
+
+                <form th:action="@{/logout}" method="post" class="d-inline m-0">
+                    <button type="submit" class="btn btn-outline-light btn-sm d-flex align-items-center gap-1 shadow-sm" title="Cerrar Sesión">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="d-none d-sm-inline">Salir</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

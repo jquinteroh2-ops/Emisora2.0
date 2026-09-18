@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${esEdicion ? 'Editar Emisora' : 'Nueva Emisora'})}"></head>
+<body>
+
+<nav th:replace="~{fragments/navbar :: navbar('emisoras')}"></nav>
+
+<main class="container py-4">
+
+    <!-- Mensajes de Alerta -->
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-broadcast text-primary"></i>
+                        <span th:text="${esEdicion ? 'Actualizar Emisora: ' + emisora.nombre : 'Registrar Nueva Emisora (Ejercicio 25)'}">Formulario de Emisora</span>
+                    </h5>
+                    <a th:href="@{/emisoras}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Volver al listado
+                    </a>
+                </div>
+
+                <div class="card-body p-4">
+                    <form th:action="${esEdicion} ? @{/emisoras/editar/{id}(id=${emisora.id})} : @{/emisoras/nuevo}"
+                          th:object="${emisora}" method="post" class="needs-validation">
+
+                        <!-- Campo oculto para ID en edición -->
+                        <input type="hidden" th:if="${esEdicion}" th:field="*{id}">
+
+                        <!-- Sección 1: Identificación y Cadena -->
+                        <h6 class="text-primary fw-bold border-bottom pb-2 mb-3">
+                            <i class="bi bi-info-circle me-1"></i> 1. Datos Generales de la Emisora
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-md-4">
+                                <label for="codigo" class="form-label fw-semibold small">Código Único <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{codigo}" id="codigo" placeholder="Ej: EM015"
+                                       th:classappend="${#fields.hasErrors('codigo')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('codigo')}" th:errors="*{codigo}"></div>
+                            </div>
+
+                            <div class="col-12 col-md-8">
+                                <label for="nombre" class="form-label fw-semibold small">Nombre de la Emisora <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{nombre}" id="nombre" placeholder="Ej: Radio Vanguardia"
+                                       th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="canal" class="form-label fw-semibold small">Canal o Cadena Radial <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{canal}" id="canal" placeholder="Ej: Cadena Nacional de Radio"
+                                       th:classappend="${#fields.hasErrors('canal')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('canal')}" th:errors="*{canal}"></div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="patrocinador" class="form-label fw-semibold small">Patrocinador Principal</label>
+                                <input type="text" class="form-control" th:field="*{patrocinador}" id="patrocinador" placeholder="Ej: Grupo Empresarial Andino">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('patrocinador')}" th:errors="*{patrocinador}"></div>
+                            </div>
+                        </div>
+
+                        <!-- Sección 2: Frecuencias de Emisión -->
+                        <h6 class="text-primary fw-bold border-bottom pb-2 mb-3">
+                            <i class="bi bi-soundwave me-1"></i> 2. Frecuencias de Transmisión (Debe contar al menos con FM o AM)
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-md-6">
+                                <label for="bandaFm" class="form-label fw-semibold small">Banda FM (MHz, rango 87.0 - 108.0)</label>
+                                <div class="input-group">
+                                    <input type="number" step="0.1" min="87.0" max="108.0" class="form-control" th:field="*{bandaFm}" id="bandaFm" placeholder="Ej: 99.5">
+                                    <span class="input-group-text">FM</span>
+                                </div>
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('bandaFm')}" th:errors="*{bandaFm}"></div>
+                                <span class="form-text small">Deje vacío si no transmite en frecuencia FM.</span>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="bandaAm" class="form-label fw-semibold small">Banda AM (kHz, rango 530 - 1710)</label>
+                                <div class="input-group">
+                                    <input type="number" min="530" max="1710" class="form-control" th:field="*{bandaAm}" id="bandaAm" placeholder="Ej: 1120">
+                                    <span class="input-group-text">AM</span>
+                                </div>
+                                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('bandaAm')}" th:errors="*{bandaAm}"></div>
+                                <span class="form-text small">Deje vacío si no transmite en frecuencia AM.</span>
+                            </div>
+                        </div>
+
+                        <!-- Sección 3: Programación y Operación -->
+                        <h6 class="text-primary fw-bold border-bottom pb-2 mb-3">
+                            <i class="bi bi-clock-history me-1"></i> 3. Programación, Género y Operación
+                        </h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-md-4">
+                                <label for="genero" class="form-label fw-semibold small">Género Principal <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{genero}" id="genero" placeholder="Ej: Noticias, Tropical, Rock..."
+                                       th:classappend="${#fields.hasErrors('genero')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('genero')}" th:errors="*{genero}"></div>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="horario" class="form-label fw-semibold small">Horario de Emisión <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{horario}" id="horario" placeholder="Ej: 24 horas o 6:00 a.m. - 10:00 p.m."
+                                       th:classappend="${#fields.hasErrors('horario')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('horario')}" th:errors="*{horario}"></div>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="pais" class="form-label fw-semibold small">País de Transmisión <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{pais}" id="pais" placeholder="Ej: Colombia, México, España..."
+                                       th:classappend="${#fields.hasErrors('pais')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('pais')}" th:errors="*{pais}"></div>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="numLocutores" class="form-label fw-semibold small">N.º de Locutores <span class="text-danger">*</span></label>
+                                <input type="number" min="0" class="form-control" th:field="*{numLocutores}" id="numLocutores"
+                                       th:classappend="${#fields.hasErrors('numLocutores')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('numLocutores')}" th:errors="*{numLocutores}"></div>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="numProgramas" class="form-label fw-semibold small">N.º de Programas al Aire <span class="text-danger">*</span></label>
+                                <input type="number" min="0" class="form-control" th:field="*{numProgramas}" id="numProgramas"
+                                       th:classappend="${#fields.hasErrors('numProgramas')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('numProgramas')}" th:errors="*{numProgramas}"></div>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="numCiudades" class="form-label fw-semibold small">N.º de Ciudades con Cobertura <span class="text-danger">*</span></label>
+                                <input type="number" min="0" class="form-control" th:field="*{numCiudades}" id="numCiudades"
+                                       th:classappend="${#fields.hasErrors('numCiudades')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('numCiudades')}" th:errors="*{numCiudades}"></div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="descripcion" class="form-label fw-semibold small">Descripción o Perfil de la Emisora</label>
+                                <textarea class="form-control" th:field="*{descripcion}" id="descripcion" rows="3"
+                                          placeholder="Breve reseña sobre el contenido temático, público objetivo y alcance..."></textarea>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a th:href="@{/emisoras}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary shadow-sm">
+                                <i class="bi bi-check-circle me-1"></i>
+                                <span th:text="${esEdicion ? 'Guardar Cambios' : 'Registrar Emisora'}">Guardar</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

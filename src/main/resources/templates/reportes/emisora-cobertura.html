@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Reporte: Cobertura de Emisoras')}"></head>
+<body>
+
+<nav th:replace="~{fragments/navbar :: navbar('reportes')}"></nav>
+
+<main class="container-fluid px-lg-4 py-4">
+
+    <!-- Mensajes de Alerta -->
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body p-3 p-md-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                <div>
+                    <span class="badge bg-warning text-dark mb-1">Reporte Parametrizado 2 &bull; Emisora</span>
+                    <h4 class="fw-bold text-dark mb-0">Cobertura y Capacidad Operativa</h4>
+                    <p class="text-muted small mb-0">Consulte emisoras según el rango de ciudades alcanzadas y un mínimo de locutores en cabina.</p>
+                </div>
+                <a th:href="@{/reportes}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Volver a Reportes
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de Parámetros -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3">
+            <span class="fw-semibold text-dark"><i class="bi bi-sliders me-1 text-primary"></i> Parámetros de Cobertura</span>
+        </div>
+        <div class="card-body p-4">
+            <form th:action="@{/reportes/emisoras/cobertura}" method="get" class="row g-3 align-items-end">
+                <div class="col-12 col-md-3">
+                    <label for="minCiudades" class="form-label fw-semibold small">Mínimo de Ciudades <span class="text-danger">*</span></label>
+                    <input type="number" min="0" class="form-control" id="minCiudades" name="minCiudades"
+                           th:value="${minCiudades}" required>
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label for="maxCiudades" class="form-label fw-semibold small">Máximo de Ciudades <span class="text-danger">*</span></label>
+                    <input type="number" min="0" class="form-control" id="maxCiudades" name="maxCiudades"
+                           th:value="${maxCiudades}" required>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="minLocutores" class="form-label fw-semibold small">Mínimo de Locutores <span class="text-danger">*</span></label>
+                    <input type="number" min="0" class="form-control" id="minLocutores" name="minLocutores"
+                           th:value="${minLocutores}" required>
+                </div>
+
+                <div class="col-12 col-md-2 d-grid">
+                    <button type="submit" class="btn btn-warning shadow-sm text-dark fw-semibold">
+                        <i class="bi bi-search me-1"></i> Consultar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resultados de la Consulta -->
+    <div class="card shadow-sm border-0" th:if="${haBuscado}">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <span class="fw-bold text-dark">
+                <i class="bi bi-table me-1 text-success"></i>
+                Emisoras con cobertura entre <strong th:text="${minCiudades}">0</strong> y <strong th:text="${maxCiudades}">50</strong> ciudades
+                y al menos <strong th:text="${minLocutores}">0</strong> locutores
+            </span>
+            <span class="badge bg-secondary" th:text="${#lists.size(resultados)} + ' emisoras encontradas'">0</span>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-custom align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Emisora</th>
+                            <th>Canal</th>
+                            <th>País</th>
+                            <th>Género</th>
+                            <th class="text-center bg-warning bg-opacity-10 fw-bold">Ciudades Cubiertas</th>
+                            <th class="text-center bg-primary bg-opacity-10 fw-bold">Locutores</th>
+                            <th class="text-center">Programas</th>
+                            <th class="text-end pe-3">Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="emisora : ${resultados}">
+                            <td>
+                                <span class="badge bg-secondary font-monospace" th:text="${emisora.codigo}">EM001</span>
+                            </td>
+                            <td class="fw-semibold text-dark" th:text="${emisora.nombre}">Caribe Estéreo</td>
+                            <td th:text="${emisora.canal}">Cadena Costa</td>
+                            <td th:text="${emisora.pais}">Colombia</td>
+                            <td>
+                                <span class="badge bg-light text-dark border" th:text="${emisora.genero}">Tropical</span>
+                            </td>
+                            <td class="text-center bg-warning bg-opacity-10 fw-bold fs-6" th:text="${emisora.numCiudades}">9</td>
+                            <td class="text-center bg-primary bg-opacity-10 fw-bold fs-6" th:text="${emisora.numLocutores}">12</td>
+                            <td class="text-center" th:text="${emisora.numProgramas}">18</td>
+                            <td class="text-end pe-3">
+                                <a th:href="@{/emisoras/ver/{id}(id=${emisora.id})}" class="btn btn-sm btn-outline-info" title="Ver ficha">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(resultados)}">
+                            <td colspan="9" class="text-center py-4 text-muted">
+                                No se encontraron emisoras que cumplan los criterios de cobertura y locutores.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

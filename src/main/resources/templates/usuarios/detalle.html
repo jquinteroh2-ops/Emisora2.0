@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Detalle de Usuario: ' + usuario.nombre)}"></head>
+<body>
+
+<nav th:replace="~{fragments/navbar :: navbar('usuarios')}"></nav>
+
+<main class="container py-4">
+
+    <!-- Mensajes de Alerta -->
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-person-circle text-primary"></i>
+                        <span>Ficha de Usuario</span>
+                    </h5>
+                    <a th:href="@{/usuarios}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Volver al listado
+                    </a>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="display-4 text-primary mb-2">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-1" th:text="${usuario.nombre}">José Quintero</h4>
+                        <span class="badge bg-secondary font-monospace fs-6" th:text="${usuario.username}">U001</span>
+                    </div>
+
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                            <span class="text-muted"><i class="bi bi-hash me-1"></i> ID Interno:</span>
+                            <span class="fw-semibold text-dark" th:text="${usuario.id}">1</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                            <span class="text-muted"><i class="bi bi-envelope me-1"></i> Correo Electrónico:</span>
+                            <span class="fw-semibold text-dark" th:text="${usuario.email}">jquinteroh2@unicartagena.edu.co</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                            <span class="text-muted"><i class="bi bi-shield-check me-1"></i> Rol Asignado:</span>
+                            <span>
+                                <span th:if="${usuario.rol == 'ADMIN'}" class="badge badge-role-admin fs-6">ADMINISTRADOR</span>
+                                <span th:if="${usuario.rol == 'OPERADOR'}" class="badge badge-role-operador fs-6">OPERADOR</span>
+                                <span th:if="${usuario.rol == 'CONSULTA'}" class="badge badge-role-consulta fs-6">CONSULTA</span>
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                            <span class="text-muted"><i class="bi bi-calendar-event me-1"></i> Fecha de Creación:</span>
+                            <span class="fw-semibold text-dark" th:text="${usuario.createdAt != null ? #temporals.format(usuario.createdAt, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}">
+                                01/08/2026 08:00:00
+                            </span>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                        <a th:href="@{/usuarios}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Regresar
+                        </a>
+                        <a th:href="@{/usuarios/editar/{id}(id=${usuario.id})}" class="btn btn-warning">
+                            <i class="bi bi-pencil me-1"></i> Editar
+                        </a>
+                        <form th:action="@{/usuarios/eliminar/{id}(id=${usuario.id})}" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Confirma la eliminación permanente de este usuario?');">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i> Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

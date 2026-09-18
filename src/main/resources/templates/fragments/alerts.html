@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="alerts">
+    <!-- Mensaje de Éxito -->
+    <div th:if="${exitoMensaje}" class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 shadow-sm my-3" role="alert">
+        <i class="bi bi-check-circle-fill fs-5"></i>
+        <div th:text="${exitoMensaje}">Operación realizada con éxito.</div>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+
+    <!-- Mensaje de Error -->
+    <div th:if="${errorMensaje}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 shadow-sm my-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+        <div th:text="${errorMensaje}">Ocurrió un error al procesar la solicitud.</div>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+
+    <!-- Mensaje de Información -->
+    <div th:if="${infoMensaje}" class="alert alert-info alert-dismissible fade show d-flex align-items-center gap-2 shadow-sm my-3" role="alert">
+        <i class="bi bi-info-circle-fill fs-5"></i>
+        <div th:text="${infoMensaje}">Información importante.</div>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+</div>
+</body>
+</html>

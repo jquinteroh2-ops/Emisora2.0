@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Ficha de Emisora: ' + emisora.nombre)}"></head>
+<body>
+
+<nav th:replace="~{fragments/navbar :: navbar('emisoras')}"></nav>
+
+<main class="container py-4">
+
+    <!-- Mensajes de Alerta -->
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-9">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-secondary font-monospace fs-6" th:text="${emisora.codigo}">EM001</span>
+                        <h4 class="fw-bold text-dark mb-0" th:text="${emisora.nombre}">Caribe Estéreo</h4>
+                    </div>
+                    <a th:href="@{/emisoras}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Regresar
+                    </a>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Frecuencias e Identidad -->
+                    <div class="row g-3 mb-4 p-3 bg-light rounded-3">
+                        <div class="col-12 col-md-4">
+                            <span class="text-muted small d-block">Canal / Cadena Radial</span>
+                            <strong class="text-dark fs-6" th:text="${emisora.canal}">Cadena Costa Norte</strong>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <span class="text-muted small d-block">Frecuencias de Emisión</span>
+                            <div>
+                                <span th:if="${emisora.bandaFm != null}" class="badge badge-fm me-1 fs-6" th:text="${emisora.bandaFm + ' FM'}">98.5 FM</span>
+                                <span th:if="${emisora.bandaAm != null}" class="badge badge-am fs-6" th:text="${emisora.bandaAm + ' AM'}">1040 AM</span>
+                                <span th:if="${emisora.bandaFm == null and emisora.bandaAm == null}" class="text-muted small">Sin frecuencia registrada</span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <span class="text-muted small d-block">País de Transmisión</span>
+                            <strong class="text-dark fs-6 d-flex align-items-center gap-1">
+                                <i class="bi bi-geo-alt-fill text-danger"></i>
+                                <span th:text="${emisora.pais}">Colombia</span>
+                            </strong>
+                        </div>
+                    </div>
+
+                    <!-- Métricas de Operación -->
+                    <div class="row g-3 mb-4 text-center">
+                        <div class="col-4">
+                            <div class="p-3 border rounded-3 bg-white shadow-sm">
+                                <span class="text-muted small text-uppercase">Locutores</span>
+                                <h3 class="fw-bold text-primary my-1" th:text="${emisora.numLocutores}">12</h3>
+                                <span class="small text-muted">en cabina</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 border rounded-3 bg-white shadow-sm">
+                                <span class="text-muted small text-uppercase">Programas</span>
+                                <h3 class="fw-bold text-success my-1" th:text="${emisora.numProgramas}">18</h3>
+                                <span class="small text-muted">al aire</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 border rounded-3 bg-white shadow-sm">
+                                <span class="text-muted small text-uppercase">Ciudades</span>
+                                <h3 class="fw-bold text-warning my-1" th:text="${emisora.numCiudades}">9</h3>
+                                <span class="small text-muted">cobertura</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detalles Adicionales -->
+                    <dl class="row mb-4">
+                        <dt class="col-sm-4 text-muted">Género Principal:</dt>
+                        <dd class="col-sm-8 fw-semibold" th:text="${emisora.genero}">Tropical</dd>
+
+                        <dt class="col-sm-4 text-muted">Horario de Transmisión:</dt>
+                        <dd class="col-sm-8" th:text="${emisora.horario}">24 horas</dd>
+
+                        <dt class="col-sm-4 text-muted">Patrocinador Principal:</dt>
+                        <dd class="col-sm-8" th:text="${emisora.patrocinador != null ? emisora.patrocinador : 'Sin patrocinador asignado'}">Comercial</dd>
+
+                        <dt class="col-sm-4 text-muted">Descripción:</dt>
+                        <dd class="col-sm-8 text-secondary" th:text="${emisora.descripcion != null ? emisora.descripcion : 'Sin descripción registrada.'}">
+                            Descripción de la emisora...
+                        </dd>
+                    </dl>
+
+                    <!-- Botones de Acción -->
+                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                        <a th:href="@{/emisoras}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Volver
+                        </a>
+                        <a th:href="@{/emisoras/editar/{id}(id=${emisora.id})}" sec:authorize="hasAnyRole('ADMIN', 'OPERADOR')" class="btn btn-warning">
+                            <i class="bi bi-pencil me-1"></i> Editar Emisora
+                        </a>
+                        <form th:action="@{/emisoras/eliminar/{id}(id=${emisora.id})}" method="post"
+                              sec:authorize="hasAnyRole('ADMIN', 'OPERADOR')" class="d-inline"
+                              onsubmit="return confirm('¿Confirma la eliminación permanente de esta emisora?');">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i> Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
