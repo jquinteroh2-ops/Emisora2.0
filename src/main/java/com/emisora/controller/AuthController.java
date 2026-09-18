@@ -49,7 +49,7 @@ public class AuthController {
             usuarioService.solicitarRecuperacion(email);
             redirectAttributes.addFlashAttribute("exitoMensaje",
                     "Si el correo está registrado en el sistema, hemos enviado un enlace para restablecer la contraseña. " +
-                    "Revise su bandeja de entrada (y la consola del servidor en modo desarrollo).");
+                    "Revise su bandeja de entrada o la carpeta de spam.");
         } catch (BusinessRuleException e) {
             redirectAttributes.addFlashAttribute("errorMensaje", e.getMessage());
             return "redirect:/recuperar-clave";

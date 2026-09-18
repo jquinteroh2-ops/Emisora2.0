@@ -1,6 +1,6 @@
 /**
  * JavaScript para Emisora 2.0 (Spring Boot MVC + Thymeleaf)
- * Funcionalidades auxiliares de UI, autocompletado de prueba y confirmaciones.
+ * Funcionalidades auxiliares de la interfaz (cierre automático de alertas).
  */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -15,17 +15,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 6000);
     });
 });
-
-/**
- * Función para rellenar credenciales de prueba en el formulario de login.
- * Facilita la sustentación académica en video.
- */
-function rellenarLogin(username, password) {
-    const userInput = document.getElementById('username');
-    const passInput = document.getElementById('password');
-    if (userInput && passInput) {
-        userInput.value = username;
-        passInput.value = password;
-        userInput.focus();
-    }
-}
