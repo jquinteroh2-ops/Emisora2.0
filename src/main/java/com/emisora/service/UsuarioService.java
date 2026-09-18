@@ -10,10 +10,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.HexFormat;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Capa de servicio para la entidad Usuario.
@@ -28,6 +33,8 @@ public class UsuarioService {
 
     public static final List<String> ROLES_PERMITIDOS = List.of("ADMIN", "OPERADOR", "CONSULTA");
     public static final int MIN_PASSWORD_LENGTH = 6;
+
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
@@ -143,14 +150,16 @@ public class UsuarioService {
             throw new BusinessRuleException("Debe ingresar un correo electrónico.");
         }
 
+        // Si el correo no existe no se informa nada distinto, para no revelar qué cuentas existen
         usuarioRepository.findByEmail(email.trim().toLowerCase()).ifPresent(usuario -> {
-            String token = UUID.randomUUID().toString();
-            usuario.setResetToken(token);
+            String token = generarToken();
+            // En la base de datos solo se guarda el hash SHA-256: quien lea la tabla no puede usar el enlace
+            usuario.setResetToken(hashToken(token));
             usuario.setResetTokenExpires(LocalDateTime.now().plusMinutes(resetTokenExpirationMinutes));
             usuarioRepository.save(usuario);
 
-            String enlace = baseUrl + "/restablecer-clave?token=" + token;
-            emailService.enviarRecuperacionContrasena(usuario.getEmail(), usuario.getNombre(), enlace, token);
+            String enlace = baseUrl.replaceAll("/+$", "") + "/restablecer-clave?token=" + token;
+            emailService.enviarRecuperacionContrasena(usuario.getEmail(), usuario.getNombre(), enlace);
         });
     }
 
@@ -160,7 +169,7 @@ public class UsuarioService {
             throw new BusinessRuleException("El enlace o token de recuperación no es válido.");
         }
 
-        Usuario usuario = usuarioRepository.findByResetToken(token.trim())
+        Usuario usuario = usuarioRepository.findByResetToken(hashToken(token.trim()))
                 .orElseThrow(() -> new BusinessRuleException("El enlace de recuperación es inválido o ya ha sido utilizado."));
 
         if (usuario.getResetTokenExpires() == null || usuario.getResetTokenExpires().isBefore(LocalDateTime.now())) {
@@ -184,6 +193,27 @@ public class UsuarioService {
         usuario.setResetToken(null);
         usuario.setResetTokenExpires(null);
         usuarioRepository.save(usuario);
+    }
+
+    /**
+     * Token aleatorio de 256 bits en Base64 URL (sirve directo en el enlace del correo).
+     */
+    private static String generarToken() {
+        byte[] bytes = new byte[32];
+        RANDOM.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    /**
+     * Hash SHA-256 en hexadecimal (64 caracteres) del token de recuperación.
+     */
+    static String hashToken(String token) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            return HexFormat.of().formatHex(digest.digest(token.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 no está disponible en la JVM", e);
+        }
     }
 
     // ---------------------------------------------------------------------

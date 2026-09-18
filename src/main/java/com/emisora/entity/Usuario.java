@@ -57,6 +57,7 @@ public class Usuario implements Serializable {
     @Column(name = "rol", nullable = false, length = 20)
     private String rol = "CONSULTA";
 
+    // Hash SHA-256 del token de recuperación (el token real solo viaja en el enlace del correo)
     @Column(name = "reset_token", length = 100)
     private String resetToken;
 

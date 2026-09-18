@@ -4,12 +4,15 @@ import com.emisora.entity.Emisora;
 import com.emisora.entity.Usuario;
 import com.emisora.repository.EmisoraRepository;
 import com.emisora.repository.UsuarioRepository;
+import com.emisora.service.EmailService;
 import com.emisora.service.UsuarioService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +22,9 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,6 +46,10 @@ class EmisoraIntegrationTest {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    // Se reemplaza el servicio de correo para capturar el enlace sin enviar correos reales
+    @MockBean
+    private EmailService emailService;
 
     @Test
     @DisplayName("1. La página de login carga correctamente sin autenticación")
@@ -278,9 +288,14 @@ class EmisoraIntegrationTest {
                 .andExpect(redirectedUrl("/login"))
                 .andExpect(flash().attributeExists("exitoMensaje"));
 
+        ArgumentCaptor<String> enlace = ArgumentCaptor.forClass(String.class);
+        verify(emailService).enviarRecuperacionContrasena(eq("jquinteroh2@unicartagena.edu.co"), anyString(), enlace.capture());
+        String token = enlace.getValue().substring(enlace.getValue().indexOf("token=") + "token=".length());
+
         Usuario usuario = usuarioRepository.findByEmail("jquinteroh2@unicartagena.edu.co").orElseThrow();
-        String token = usuario.getResetToken();
-        assertNotNull(token, "El token de recuperación debe haber sido generado y guardado.");
+        assertNotNull(usuario.getResetToken(), "El hash del token de recuperación debe quedar guardado.");
+        assertNotEquals(token, usuario.getResetToken(), "En la base de datos no debe quedar el token en texto plano.");
+        assertEquals(64, usuario.getResetToken().length(), "Se guarda el hash SHA-256 en hexadecimal.");
 
         // Abrir formulario con el token
         mockMvc.perform(get("/restablecer-clave").param("token", token))
@@ -300,5 +315,10 @@ class EmisoraIntegrationTest {
 
         Usuario usuarioActualizado = usuarioRepository.findByEmail("jquinteroh2@unicartagena.edu.co").orElseThrow();
         assertNull(usuarioActualizado.getResetToken(), "El token debe limpiarse tras el restablecimiento.");
+
+        // El enlace es de un solo uso
+        mockMvc.perform(get("/restablecer-clave").param("token", token))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
     }
 }
