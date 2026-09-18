@@ -4,17 +4,17 @@
 -- Motores  : MySQL 8.0+ / MariaDB / PostgreSQL / H2
 -- Autor    : Jose Antonio Quintero Herrera (7502510055)
 --
--- Contraseñas de prueba cifradas con BCrypt:
---   Admin:     jquinteroh2@unicartagena.edu.co / Admin2026*  (o American8)
---   Operador:  operador.emisora@yopmail.com   / Admin2026*  (o American8)
---   Consulta:  consulta.emisora@yopmail.com   / Admin2026*  (o American8)
+-- Contraseñas de prueba cifradas con BCrypt (todas: Admin2026*):
+--   Admin:     U001 o jquinteroh2@unicartagena.edu.co
+--   Operador:  U002 o operador.emisora@yopmail.com
+--   Consulta:  U004 o consulta.emisora@yopmail.com
 --
 -- Hash BCrypt para 'Admin2026*':
 --   $2a$10$wp5RlxO1OhmRxnccUMO8cuEXEm9c6bNpsgv8/v.q5nN97rd/grlYe
 -- =====================================================================
 
 SET NAMES utf8mb4;
-USE emisora_db;
+USE emisora2_db;
 
 -- ---------------------------------------------------------------------
 -- Datos iniciales para la tabla usuarios

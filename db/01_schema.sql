@@ -7,11 +7,11 @@
 
 SET NAMES utf8mb4;
 
-CREATE DATABASE IF NOT EXISTS emisora_db
+CREATE DATABASE IF NOT EXISTS emisora2_db
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-USE emisora_db;
+USE emisora2_db;
 
 DROP TABLE IF EXISTS emisoras;
 DROP TABLE IF EXISTS usuarios;
