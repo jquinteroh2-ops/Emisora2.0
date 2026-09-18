@@ -70,6 +70,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!--/* th:each recorre la lista "emisoras" que el controlador puso en el Model */-->
                         <tr th:each="emisora : ${emisoras}">
                             <td>
                                 <span class="badge bg-secondary font-monospace" th:text="${emisora.codigo}">EM001</span>

@@ -15,6 +15,7 @@ import java.util.Optional;
  *
  * @author Jose Antonio Quintero Herrera (7502510055)
  */
+// Al extender JpaRepository, Spring Data JPA ya trae save, findById, findAll y delete sin escribir SQL
 @Repository
 public interface EmisoraRepository extends JpaRepository<Emisora, Long> {
 

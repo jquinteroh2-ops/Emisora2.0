@@ -24,6 +24,7 @@
                 </div>
 
                 <div class="card-body p-4">
+                    <!--/* th:object enlaza el formulario con el objeto Emisora; cada th:field es un atributo (binding) */-->
                     <form th:action="${esEdicion} ? @{/emisoras/editar/{id}(id=${emisora.id})} : @{/emisoras/nuevo}"
                           th:object="${emisora}" method="post" class="needs-validation">
 

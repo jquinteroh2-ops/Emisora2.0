@@ -30,6 +30,7 @@ public class EmisoraController {
 
     private final EmisoraService emisoraService;
 
+    // Inyección de dependencias: Spring entrega el EmisoraService por el constructor (no se usa new)
     public EmisoraController(EmisoraService emisoraService) {
         this.emisoraService = emisoraService;
     }
@@ -43,9 +44,11 @@ public class EmisoraController {
                 ? emisoraService.buscarPorTermino(buscar)
                 : emisoraService.listarTodas();
 
+        // El Model lleva los datos del controlador a la vista
         model.addAttribute("emisoras", lista);
         model.addAttribute("buscar", buscar != null ? buscar : "");
         model.addAttribute("totalEmisoras", emisoraService.contarTotal());
+        // Se retorna el NOMBRE de la plantilla (templates/emisoras/lista.html), no JSON
         return "emisoras/lista";
     }
 
@@ -79,6 +82,7 @@ public class EmisoraController {
     /**
      * Procesa la creación de una emisora con validaciones Bean Validation y reglas de negocio.
      */
+    // Recibe el formulario: Spring llena el objeto Emisora con los campos (binding) y @Valid lo valida
     @PostMapping("/nuevo")
     public String guardarNuevo(@Valid @ModelAttribute("emisora") Emisora emisora,
                                BindingResult bindingResult,
@@ -90,9 +94,11 @@ public class EmisoraController {
         }
 
         try {
+            // Controller -> Service -> Repository -> base de datos
             emisoraService.guardar(emisora);
             redirectAttributes.addFlashAttribute("exitoMensaje",
                     "Emisora '" + emisora.getNombre() + "' registrada exitosamente.");
+            // Redirige a la lista: listar() llena el Model y Thymeleaf genera el HTML
             return "redirect:/emisoras";
         } catch (DuplicateResourceException | BusinessRuleException e) {
             model.addAttribute("errorMensaje", e.getMessage());

@@ -36,6 +36,7 @@ public class SecurityConfig {
         this.usuarioRepository = usuarioRepository;
     }
 
+    // Las contraseñas se guardan cifradas con BCrypt, nunca en texto plano
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -77,7 +78,7 @@ public class SecurityConfig {
                         "/h2-console/**"
                 ).permitAll()
 
-                // Gestión de usuarios: exclusivo para administradores
+                // Gestión de usuarios: exclusivo para administradores (los demás roles reciben 403)
                 .requestMatchers("/usuarios/**").hasRole("ADMIN")
 
                 // Creación, edición y eliminación de emisoras: ADMIN y OPERADOR

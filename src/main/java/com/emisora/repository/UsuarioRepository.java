@@ -46,6 +46,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     /**
      * REPORTE PARAMETRIZADO 1 DE USUARIO:
      * Listar usuarios filtrados por su rol en el sistema.
+     * Método derivado: Spring arma la consulta a partir del nombre del método.
      */
     List<Usuario> findByRolOrderByNombreAsc(String rol);
 

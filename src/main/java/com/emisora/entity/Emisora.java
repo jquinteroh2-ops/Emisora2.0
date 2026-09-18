@@ -23,6 +23,7 @@ import java.io.Serializable;
  *
  * @author Jose Antonio Quintero Herrera (7502510055)
  */
+// @Entity: JPA convierte esta clase en la tabla "emisoras" de la base de datos
 @Entity
 @Table(name = "emisoras")
 public class Emisora implements Serializable {
@@ -48,6 +49,7 @@ public class Emisora implements Serializable {
     @Column(name = "canal", nullable = false, length = 100)
     private String canal;
 
+    // Regla del ejercicio: FM entre 87.5 y 108.0 MHz (AM entre 530 y 1710 kHz)
     @DecimalMin(value = "87.5", message = "La frecuencia FM mínima es 87.5 MHz.")
     @DecimalMax(value = "108.0", message = "La frecuencia FM máxima es 108.0 MHz.")
     @Column(name = "banda_fm")

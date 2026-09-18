@@ -121,6 +121,7 @@ public class UsuarioService {
     public void eliminar(Long id, String usernameSesionActual) {
         Usuario usuario = buscarPorId(id);
 
+        // Regla: un administrador no puede eliminarse a sí mismo mientras usa su cuenta
         if (usuario.getUsername().equalsIgnoreCase(usernameSesionActual)) {
             throw new BusinessRuleException("No puede eliminar su propio usuario mientras tiene la sesión activa.");
         }

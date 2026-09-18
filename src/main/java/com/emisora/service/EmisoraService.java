@@ -57,7 +57,9 @@ public class EmisoraService {
     }
 
     public Emisora guardar(Emisora emisora) {
+        // 1. Reglas de negocio (código y nombre únicos, al menos una frecuencia, rangos FM/AM)
         validarReglasDeNegocio(emisora, null);
+        // 2. Si todo está bien, el repositorio guarda en la base de datos
         return emisoraRepository.save(emisora);
     }
 
