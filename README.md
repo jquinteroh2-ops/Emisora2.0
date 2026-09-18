@@ -5,7 +5,7 @@
 **Asignatura:** Desarrollo Web (cuarto semestre) &bull; **Institución:** Universidad de Cartagena  
 **Ejercicio asignado:** N.º 25 &mdash; **Emisora**
 
-**Aplicación desplegada:** _(se completa al publicar en Render)_
+**Aplicación desplegada:** <https://emisora-2-0.onrender.com> (Render, plan gratuito: la primera visita tras un rato de inactividad puede tardar cerca de un minuto)
 
 ---
 
